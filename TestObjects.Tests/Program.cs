@@ -1,8 +1,7 @@
-﻿using TestObjects;
-
+using TestObjects;
 using FluentAssertions;
 
-await TestRunner.RunTests(
+return await TestRunner.RunTests(
     new Test(
         "dupa is not empty",
         () =>

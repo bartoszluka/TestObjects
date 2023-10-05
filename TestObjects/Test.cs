@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace TestObjects;
 
 public record Test
@@ -44,12 +42,12 @@ public static class TestRunner
         Console.WriteLine(text);
     }
 
-    public static async Task RunTests(params Test[] tests)
+    public static async Task<int> RunTests(params Test[] tests)
     {
-        await RunTests(tests.ToList());
+        return await RunTests(tests.ToList());
     }
 
-    public static async Task RunTests(IReadOnlyList<Test> tests)
+    public static async Task<int> RunTests(IReadOnlyList<Test> tests)
     {
         var allTests = tests.Count;
         var testOrTests = allTests == 1 ? "test" : "tests";
@@ -83,10 +81,12 @@ public static class TestRunner
         if (failedTestsCount == 0)
         {
             WriteSuccess($"{testSummary} all tests passed");
+            return 0;
         }
         else
         {
             WriteFailure($"{testSummary} {allTests - failedTestsCount}/{allTests} tests passed");
+            return 1;
         }
     }
 
