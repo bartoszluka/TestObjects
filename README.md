@@ -1,4 +1,4 @@
-# TestObjects --- create tests as plain old C# objects
+# TestObjects - create tests as plain old C# objects
 
 ## What is this
 
@@ -15,6 +15,7 @@ Problems with other frameworks
    - based on method names, so no whitespace allowed
    - no human readable strings allowed so a naming convention must be used to name tests
    - `Handle_ProductDoesNotExistAndApiProductIsNotNullWithFalseStatus_ShouldUpdateLastCheckDateAsync` --- actual name of the test in my work codebase
+       - even when you can provide `[Fact(DisplayName = "some good description")]` you still need to name the method in some way
 1. Based on reflections
    - "0 references" on test methods
    - you need to remember to put `[Test]` or `[Theory]` attribute
