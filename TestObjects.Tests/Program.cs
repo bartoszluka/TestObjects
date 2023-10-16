@@ -9,7 +9,10 @@ return await TestRunner.RunTests(
             var input = "dupa";
             input.Should().NotBeEmpty();
         }
-    ),
+    ) with
+    {
+        SkippedBecause = "I wanted to"
+    },
     new Test(
         "failing test",
         () =>

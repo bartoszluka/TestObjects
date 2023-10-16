@@ -4,6 +4,7 @@ public record Test
 {
     public string TestDescription { get; }
     public Task InnerTask { get; }
+    public string? SkippedBecause { get; init; }
 
     public Test(string testDescription, Action action)
     {
@@ -36,6 +37,13 @@ public static class TestRunner
         Console.ResetColor();
     }
 
+    private static void WriteWarning(string text)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(text);
+        Console.ResetColor();
+    }
+
     private static void WriteNormal(string text)
     {
         Console.ResetColor();
@@ -59,10 +67,18 @@ public static class TestRunner
             stringBuilder.Append(test.TestDescription);
             try
             {
-                WriteNormal($"Running test {index}/{allTests}");
-                WriteNormal(test.TestDescription);
-                await test.InnerTask;
-                WriteSuccess("[PASSED] " + test.TestDescription);
+                if (test.SkippedBecause is string reason)
+                {
+                    WriteNormal(test.TestDescription);
+                    WriteWarning("[SKIPPED] reason: " + reason);
+                }
+                else
+                {
+                    WriteNormal($"Running test {index}/{allTests}");
+                    WriteNormal(test.TestDescription);
+                    await test.InnerTask;
+                    WriteSuccess("[PASSED] " + test.TestDescription);
+                }
             }
             catch (System.Exception e)
             {
