@@ -60,7 +60,7 @@ Example using `FluentAssertions` package and top-level statements and implicit `
 ```cs
 // TestObjects.Tests/Program.cs
 
-﻿using TestObjects;
+using TestObjects;
 using FluentAssertions;
 
 return await TestRunner.RunTests(
@@ -71,7 +71,10 @@ return await TestRunner.RunTests(
             var input = "dupa";
             input.Should().NotBeEmpty();
         }
-    ),
+    ) with
+    {
+        SkippedBecause = "I wanted to"
+    },
     new Test(
         "failing test",
         () =>
@@ -94,7 +97,6 @@ static Test FunctionReturningTest()
 {
     return new Test("hello", () => { });
 }
-
 
 ```
 

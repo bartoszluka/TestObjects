@@ -60,6 +60,7 @@ public static class TestRunner
         var allTests = tests.Count;
         var testOrTests = allTests == 1 ? "test" : "tests";
         var failedTestsCount = 0;
+        var skippedTestsCount = 0;
         Console.WriteLine($"Running {allTests} {testOrTests}");
         var stringBuilder = new StringBuilder();
         foreach (var (index, test) in IndexedAt1(tests))
@@ -71,6 +72,7 @@ public static class TestRunner
                 {
                     WriteNormal(test.TestDescription);
                     WriteWarning("[SKIPPED] reason: " + reason);
+                    skippedTestsCount++;
                 }
                 else
                 {
@@ -82,28 +84,41 @@ public static class TestRunner
             }
             catch (System.Exception e)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
                 WriteFailure("[FAILED] " + test.TestDescription);
-                if (e.StackTrace is string stackTrace)
+                if (e.StackTrace is string firstStackTrace)
                 {
-                    WriteFailure(e.StackTrace);
+                    WriteFailure(RemoveInternalStackTrace(firstStackTrace));
                 }
                 failedTestsCount++;
             }
             stringBuilder.Clear();
         }
 
-        var testSummary = new string(' ', 3) + "test summary: ";
+        System.Console.WriteLine("");
         if (failedTestsCount == 0)
         {
-            WriteSuccess($"{testSummary} all tests passed");
+            WriteSuccess($"[SUCCESS] all {allTests} tests passed");
             return 0;
         }
         else
         {
-            WriteFailure($"{testSummary} {allTests - failedTestsCount}/{allTests} tests passed");
+            WriteFailure(
+                $"[FAILURE] {allTests - failedTestsCount - skippedTestsCount}/{allTests} tests passed + {skippedTestsCount} skipped"
+            );
             return 1;
         }
+    }
+
+    private static string RemoveInternalStackTrace(string firstStackTrace)
+    {
+        var removedInternalStackTrace = firstStackTrace
+            ?.Split("--- End of stack trace from previous location ---")
+            ?.FirstOrDefault();
+        if (removedInternalStackTrace is null)
+        {
+            return firstStackTrace!;
+        }
+        return removedInternalStackTrace;
     }
 
     private static IEnumerable<(int, T)> IndexedAt1<T>(IEnumerable<T> items)
